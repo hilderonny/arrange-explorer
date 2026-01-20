@@ -7,6 +7,7 @@ const LIST_DIV = document.getElementById('list')
 const PREVIEW_IFRAME = document.getElementById('preview')
 const PRIVATE_BUTTON = document.getElementById('privatebutton')
 const PUBLIC_BUTTON = document.getElementById('publicbutton')
+const DELETE_BUTTON = document.getElementById('deletebutton')
 
 async function selectDirectoryInCurrentPath(name) {
     CURRENT_PATH += '/' + name
@@ -22,7 +23,10 @@ async function showCurrentDir() {
     LIST_DIV.innerHTML = ''
     PREVIEW_IFRAME.src = ''
     const functionToCall = IS_PUBLIC ? Arrange.getPublicFile : Arrange.getPrivateFile
-    if (CURRENT_PATH != '') {
+    if (CURRENT_PATH === '') {
+        DELETE_BUTTON.setAttribute('disabled', 'disabled')
+    } else {
+        DELETE_BUTTON.removeAttribute('disabled')
         const parentDiv = document.createElement('div')
         parentDiv.innerHTML = '..'
         parentDiv.classList.add('dir')
@@ -53,16 +57,16 @@ async function showCurrentDir() {
 PRIVATE_BUTTON.addEventListener('click', async () => {
     IS_PUBLIC = false
     CURRENT_PATH = ''
-    PRIVATE_BUTTON.classList.add('active')
-    PUBLIC_BUTTON.classList.remove('active')
+    PRIVATE_BUTTON.setAttribute('disabled', 'disabled')
+    PUBLIC_BUTTON.removeAttribute('disabled')
     await showCurrentDir()
 })
 
 PUBLIC_BUTTON.addEventListener('click', async () => {
     IS_PUBLIC = true
     CURRENT_PATH = ''
-    PRIVATE_BUTTON.classList.remove('active')
-    PUBLIC_BUTTON.classList.add('active')
+    PRIVATE_BUTTON.removeAttribute('disabled')
+    PUBLIC_BUTTON.setAttribute('disabled', 'disabled')
     await showCurrentDir()
 })
 

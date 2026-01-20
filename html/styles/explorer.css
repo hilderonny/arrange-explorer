@@ -39,14 +39,6 @@ body {
 }
 
 #toolbar button {
-    background-color: #eeeeee;
-    border: 1px solid #cccccc;
-    border-radius: 2px;
     margin: 4px;
     padding: 2px 8px;
-}
-
-#toolbar button.active {
-    background-color: #6666ff;
-    color: #ffffff;
 }
