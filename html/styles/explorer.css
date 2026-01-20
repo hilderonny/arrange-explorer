@@ -1,0 +1,52 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    display: grid;
+    grid-template: min-content / min-content auto;
+    grid-template-areas: 'toolbar toolbar' 'list preview';
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+#list {
+    grid-area: list;
+}
+
+#list div {
+    color: #0000ff;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#preview {
+    grid-area: preview;
+    height: 100%;
+    width: 100%;
+}
+
+#toolbar {
+    display: flex;
+    grid-area: toolbar;
+}
+
+#toolbar button {
+    background-color: #eeeeee;
+    border: 1px solid #cccccc;
+    border-radius: 2px;
+    margin: 4px;
+    padding: 2px 8px;
+}
+
+#toolbar button.active {
+    background-color: #6666ff;
+    color: #ffffff;
+}

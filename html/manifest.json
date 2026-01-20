@@ -1,0 +1,13 @@
+{
+    "short_name": "Explorer",
+    "name": "Explorer",
+    "icons": [
+        {
+            "src": "images/explorer.png",
+            "type": "image/png",
+            "sizes": "144x144"
+        }
+    ],
+    "start_url": "index.html",
+    "display": "standalone"
+}

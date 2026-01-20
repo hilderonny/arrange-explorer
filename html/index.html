@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <title>Explorer</title>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="apple-touch-icon" href="images/explorer.png">
+    <link rel="shortcut icon" href="images/explorer.png">
+    <link rel="stylesheet" href="styles/explorer.css">
+    <script type="module" src="js/explorer.js"></script>
+  </head>
+  <body>
+
+    <div id="toolbar">
+
+      <button id="publicbutton" class="toggle active">Public</button>
+      <button id="privatebutton" class="toggle">Private</button>
+
+      <button id="adddirectorybutton">+ Verzeichnis</button>
+      <button id="uploadbutton">Hochladen</button>
+      <button id="deletebutton">Löschen</button>
+
+    </div>
+
+    <div id="list"></div>
+
+    <iframe id="preview"></iframe>
+    
+  </body>
+  
+</html>
