@@ -18,8 +18,11 @@
       <button id="privatebutton">Private</button>
 
       <button id="adddirectorybutton">+ Verzeichnis</button>
-      <button id="uploadbutton">Hochladen</button>
-      <button id="deletebutton" disabled>Löschen</button>
+      <button id="uploadbutton">
+        <progress id="uploadprogress" min="0" max="100"></progress>
+        <label>Hochladen</label>
+      </button>
+      <input id="uploadfile" type="file"/>
 
     </div>
 

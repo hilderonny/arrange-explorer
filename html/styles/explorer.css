@@ -21,10 +21,15 @@ body {
     grid-area: list;
 }
 
-#list div {
+#list div label {
     color: #0000ff;
     cursor: pointer;
     text-decoration: underline;
+    white-space: nowrap;
+}
+
+#list div {
+    white-space: nowrap;
 }
 
 #preview {
@@ -41,4 +46,18 @@ body {
 #toolbar button {
     margin: 4px;
     padding: 2px 8px;
+    position: relative;
+}
+
+#toolbar input {
+    display: none;
+}
+
+#toolbar button progress {
+    display: none;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
 }
