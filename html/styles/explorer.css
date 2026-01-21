@@ -9,8 +9,8 @@ html {
 
 body {
     display: grid;
-    grid-template: min-content / min-content auto;
-    grid-template-areas: 'toolbar toolbar' 'list preview';
+    grid-template: min-content min-content / min-content auto;
+    grid-template-areas: 'toolbar toolbar' 'path path' 'list preview';
     height: 100%;
     margin: 0;
     padding: 0;
@@ -21,15 +21,26 @@ body {
     grid-area: list;
 }
 
+#list div {
+    display: flex;
+    padding: 4px;
+}
+
+#list div:hover {
+    background-color: #f8f8f8;
+}
+
 #list div label {
     color: #0000ff;
     cursor: pointer;
+    flex: auto;
+    margin-right: 4px;
     text-decoration: underline;
     white-space: nowrap;
 }
 
-#list div {
-    white-space: nowrap;
+#path {
+    grid-area: path;
 }
 
 #preview {

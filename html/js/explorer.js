@@ -3,6 +3,7 @@ import * as Arrange from '/arrange/js/arrange.js'
 let IS_PUBLIC = true
 let CURRENT_PATH = '/'
 
+const PATH_DIV = document.getElementById('path')
 const LIST_DIV = document.getElementById('list')
 const PREVIEW_IFRAME = document.getElementById('preview')
 const PRIVATE_BUTTON = document.getElementById('privatebutton')
@@ -66,6 +67,7 @@ async function showCurrentDir() {
         entryDiv.appendChild(deleteButton)
         LIST_DIV.appendChild(entryDiv)
     }
+    PATH_DIV.innerHTML = CURRENT_PATH
 }
 
 PRIVATE_BUTTON.addEventListener('click', async () => {
