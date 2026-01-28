@@ -1,37 +1,74 @@
 <!DOCTYPE html>
 <html lang="de">
-  <head>
-    <meta charset="utf-8">
-    <title>Explorer</title>
-    <link rel="manifest" href="./manifest.json">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="apple-touch-icon" href="images/explorer.png">
-    <link rel="shortcut icon" href="images/explorer.png">
-    <link rel="stylesheet" href="styles/explorer.css">
-    <script type="module" src="js/explorer.js"></script>
-  </head>
-  <body>
+    <head>
+        <meta charset="utf-8">
+        <title>Explorer</title>
+        <link rel="manifest" href="./manifest.json">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <link rel="apple-touch-icon" href="images/explorer.png">
+        <link rel="shortcut icon" href="images/explorer.png">
+        <link rel="stylesheet" href="styles/explorer.css">
+        <script type="module" src="js/explorer.js"></script>
+    </head>
+    <body>
+        
+        <input type="checkbox" id="nav-toggle" name="nav-toggle" hidden>
 
-    <div id="toolbar">
+        <aside class="sidebar">
+            <header>
+                <img src="images/explorer.png"/>
+                <div class="app-title">EXPLORER</div>
+            </header>
+            <nav id="list"></nav>
+        </aside>
 
-      <button id="publicbutton" disabled>Public</button>
-      <button id="privatebutton">Private</button>
+        <label for="nav-toggle" class="menu-toggle">
+            <span>☰</span>
+            <div class="overlay"></div>
+        </label>
 
-      <button id="adddirectorybutton">+ Verzeichnis</button>
-      <button id="uploadbutton">
-        <progress id="uploadprogress" min="0" max="100"></progress>
-        <label>Hochladen</label>
-      </button>
-      <input id="uploadfile" type="file"/>
+        <div class="">
 
-    </div>
+            <header id="topbar">
+                <div class="page-title" id="path"></div>
+                <div class="buttons">
+                    <button onclick="location.reload()">Aktualisieren</button>
+                    <button id="publicbutton" disabled>Public</button>
+                    <button id="privatebutton">Private</button>
+                    <button id="adddirectorybutton">+ Verzeichnis</button>
+                    <button id="uploadbutton">
+                        <progress id="uploadprogress" min="0" max="100"></progress>
+                        <label>Hochladen</label>
+                    </button>
+                    <input id="uploadfile" type="file"/>
+                </div>
+            </header>
+                    
+            <iframe id="preview"></iframe>
 
-    <div id="path"></div>
+        </div>
+<!-- 
 
-    <div id="list"></div>
+        <div id="toolbar">
 
-    <iframe id="preview"></iframe>
-    
-  </body>
+        <button id="publicbutton" disabled>Public</button>
+        <button id="privatebutton">Private</button>
+
+        <button id="adddirectorybutton">+ Verzeichnis</button>
+        <button id="uploadbutton">
+            <progress id="uploadprogress" min="0" max="100"></progress>
+            <label>Hochladen</label>
+        </button>
+        <input id="uploadfile" type="file"/>
+
+        </div>
+
+        <div id="path"></div>
+
+        <div id="list"></div>
+
+        <iframe id="preview"></iframe>
+         -->
+    </body>
   
 </html>
