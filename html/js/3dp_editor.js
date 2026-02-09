@@ -71,16 +71,22 @@ async function updatePrimitive() {
     const vertices = jsonData?.v
     const faces = jsonData?.f
     const faceVertices = []
+    const facUVs = []
     for (const face of faces) {
-        for (const vertexIndex of face) {
-            faceVertices.push(...vertices[vertexIndex])
+        for (const vertex of face) {
+            faceVertices.push(...vertices[vertex.v])
+            if (vertex.uv) {
+                facUVs.push(...vertex.uv)
+            }
         }
     }
+    // Siehe https://threejs.org/manual/#en/custom-buffergeometry
     GEOMETRY.setAttribute('position', new THREE.BufferAttribute(new Float32Array(faceVertices), 3))
     const color = jsonData?.m?.c
     MATERIAL.color.setRGB(color[0], color[1], color[2])
     MATERIAL.opacity = (255 - color[3]) / 255
     if (jsonData?.m?.t) {
+        GEOMETRY.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(facUVs), 2))
         MATERIAL.map = await TEXTURE_LOADER.loadAsync(jsonData.m.t)
         MATERIAL.needsUpdate = true
     }
