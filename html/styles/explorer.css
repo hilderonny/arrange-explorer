@@ -181,6 +181,7 @@ td, th {
 
         
         button:disabled {
+            cursor: initial;
             opacity: 0.3;
         }
 

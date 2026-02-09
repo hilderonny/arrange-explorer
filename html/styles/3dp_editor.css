@@ -14,10 +14,16 @@ html, body {
 body {
     display: flex;
     height: 100vh;
+
+    .left {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+    }
 }
 
 #editor {
-    flex: 1;
+    flex: auto;
     resize: none;
 }
 

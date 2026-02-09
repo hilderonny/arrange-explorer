@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <link rel="stylesheet" href="styles/3dp_editor.css">
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "./js/threejs/build/three.module.min.js",
+                    "three/addons/": "./js/threejs/examples/jsm/"
+                }
+            }
+        </script>
+        <script type="module" src="js/3dp_editor.js"></script>
+    </head>
+
+    <body>
+
+        <div class="left">
+            <button id="savebutton">Speichern</button>
+            <textarea id="editor"></textarea>
+        </div>
+
+        <div id="preview"></div>
+
+    </body>
+
+</html>

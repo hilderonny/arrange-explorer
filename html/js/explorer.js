@@ -19,8 +19,8 @@ async function selectDirectoryInCurrentPath(name) {
 
 async function selectFileInCurrentPath(name) {
     const userPath = IS_PUBLIC ? 'public' : localStorage.getItem('userid')
-    if (name.endsWith('.3do')) {
-        PREVIEW_IFRAME.src = `3do_editor.html?${userPath}${CURRENT_PATH}${name}`
+    if (name.endsWith('.3dp')) {
+        PREVIEW_IFRAME.src = `3dp_editor.html?${userPath}${CURRENT_PATH}${name}`
     } else {
         PREVIEW_IFRAME.src = `/api/files/${userPath}${CURRENT_PATH}${name}`
     }
@@ -34,15 +34,15 @@ async function showCurrentDir() {
     if (CURRENT_PATH !== '/') {
         const parentDiv = document.createElement('div')
         parentDiv.classList.add('dir')
-        const parentLabel = document.createElement('label')
-        parentLabel.innerHTML = '..'
-        parentLabel.addEventListener('click', async () => {
+        const parentLink = document.createElement('a')
+        parentLink.innerHTML = '..'
+        parentLink.addEventListener('click', async () => {
             const pathParts = CURRENT_PATH.split('/')
             pathParts.splice(pathParts.length - 2, 1)
             CURRENT_PATH = pathParts.join('/')
             await showCurrentDir()
         })
-        parentDiv.appendChild(parentLabel)
+        parentDiv.appendChild(parentLink)
         LIST_DIV.appendChild(parentDiv)
     }
     const dirContent = await (await functionToCall(CURRENT_PATH)).json() || []
