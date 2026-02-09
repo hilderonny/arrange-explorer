@@ -18,15 +18,19 @@ async function selectDirectoryInCurrentPath(name) {
 }
 
 async function selectFileInCurrentPath(name) {
-    console.log(CURRENT_PATH, name)
     const userPath = IS_PUBLIC ? 'public' : localStorage.getItem('userid')
-    PREVIEW_IFRAME.src = `/api/files/${userPath}${CURRENT_PATH}${name}`
+    if (name.endsWith('.3do')) {
+        PREVIEW_IFRAME.src = `3do_editor.html?${userPath}${CURRENT_PATH}${name}`
+    } else {
+        PREVIEW_IFRAME.src = `/api/files/${userPath}${CURRENT_PATH}${name}`
+    }
 }
 
 async function showCurrentDir() {
     LIST_DIV.innerHTML = ''
     PREVIEW_IFRAME.src = ''
     const functionToCall = IS_PUBLIC ? Arrange.getPublicFile : Arrange.getPrivateFile
+    const userPath = IS_PUBLIC ? 'public' : localStorage.getItem('userid')
     if (CURRENT_PATH !== '/') {
         const parentDiv = document.createElement('div')
         parentDiv.classList.add('dir')
@@ -45,16 +49,18 @@ async function showCurrentDir() {
     for (const entry of dirContent.sort((a, b) => a.name.localeCompare(b.name))) {
         const entryDiv = document.createElement('div')
         entryDiv.classList.add(entry.type)
-        const entryLabel = document.createElement('label')
-        entryLabel.innerHTML = entry.name
-        entryLabel.addEventListener('click', async () => {
+        const entryLink = document.createElement('a')
+        entryLink.href = `/api/files/${userPath}${CURRENT_PATH}${entry.name}`
+        entryLink.innerHTML = entry.name
+        entryLink.addEventListener('click', async (event) => {
+            event.preventDefault()
             if (entry.type === 'dir') {
                 await selectDirectoryInCurrentPath(entry.name)
             } else {
                 await selectFileInCurrentPath(entry.name)
             }
         })
-        entryDiv.appendChild(entryLabel)
+        entryDiv.appendChild(entryLink)
         const deleteButton = document.createElement('button')
         deleteButton.innerHTML = 'Löschen'
         deleteButton.addEventListener('click', async () => {
@@ -92,6 +98,15 @@ document.getElementById('adddirectorybutton').addEventListener('click', async ()
     const fixedDirName = dirName.replaceAll(/[^\p{L}\p{N}]/gu, '_')
     const functionToCall = IS_PUBLIC ? Arrange.createPublicPath : Arrange.createPrivatePath
     await functionToCall(CURRENT_PATH + fixedDirName)
+    await showCurrentDir()
+})
+
+document.getElementById('addtextfilebutton').addEventListener('click', async () => {
+    const fileName = prompt('Dateiname', 'Datei.txt')
+    if (!fileName) return
+    const fixedFileName = fileName.replaceAll(/[^\p{L}\p{N}.]/gu, '_')
+    const functionToCall = IS_PUBLIC ? Arrange.postPublicFile : Arrange.postPrivateFile
+    await functionToCall(CURRENT_PATH + '/' + fixedFileName, fixedFileName)
     await showCurrentDir()
 })
 

@@ -80,7 +80,7 @@ body {
         div {
             white-space: nowrap;
 
-            label {
+            a {
                 color: #444444;
                 cursor: pointer;
                 border-radius: 4px;
@@ -89,11 +89,12 @@ body {
                 white-space: nowrap;
             }
 
-            label:hover {
+            a:hover {
                 background-color: rgba(0, 0, 0, 0.1);
+                text-decoration: underline;
             }
 
-            label.selected {
+            a.selected {
                 background-color: #2266ee;
                 color: #ffffff;
             }
