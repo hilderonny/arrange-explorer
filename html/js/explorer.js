@@ -106,7 +106,21 @@ document.getElementById('addtextfilebutton').addEventListener('click', async () 
     if (!fileName) return
     const fixedFileName = fileName.replaceAll(/[^\p{L}\p{N}.]/gu, '_')
     const functionToCall = IS_PUBLIC ? Arrange.postPublicFile : Arrange.postPrivateFile
-    await functionToCall(CURRENT_PATH + '/' + fixedFileName, fixedFileName)
+    await functionToCall(CURRENT_PATH + '/' + fixedFileName, fixedFileName.endsWith('.3dp') ? `{
+  "v": [
+    [0,0,0],
+    [1,0,0],
+    [1,1,0],
+    [0,1,0]
+  ],
+  "f": [
+    [0,1,2],
+    [0,2,3]
+  ],
+  "m": {
+    "c": [100,50,10,0]
+  }
+}` : fixedFileName)
     await showCurrentDir()
 })
 

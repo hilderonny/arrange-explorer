@@ -13,8 +13,7 @@ const FILE_CONTENT = await (await (IS_PUBLIC ? Arrange.getPublicFile : Arrange.g
 EDITOR_TEXTAREA.value = FILE_CONTENT
 EDITOR_TEXTAREA.addEventListener('input', () => {
     try {
-        const data = JSON.parse(EDITOR_TEXTAREA.value)
-        console.log(data)
+        updatePrimitive()
     } catch {}
 })
 
@@ -42,12 +41,11 @@ PREVIEW_DIV.appendChild(RENDERER.domElement)
 
 const GEOMETRY = new THREE.BufferGeometry()
 const MATERIAL = new THREE.MeshLambertMaterial()
+MATERIAL.transparent = true
 const MESH = new THREE.Mesh(GEOMETRY, MATERIAL)
 SCENE.add(MESH)
-//updatePrimitive()
 
 document.getElementById('savebutton').addEventListener('click', async () => {
-    console.log(EDITOR_TEXTAREA.value, FILE_PATH)
     await (IS_PUBLIC ? Arrange.postPublicFile : Arrange.postPrivateFile)(FILE_PATH, EDITOR_TEXTAREA.value)
     alert('Gespeichert.')
 })
@@ -56,6 +54,7 @@ document.getElementById('savebutton').addEventListener('click', async () => {
 window.addEventListener('resize', onWindowResize, false)
 
 onWindowResize()
+updatePrimitive()
 
 function onWindowResize() {
     RENDERER.setSize(100, 100) // Nur so wird die Größe des übergeordneten Elements richtig brechnet
@@ -67,17 +66,17 @@ function onWindowResize() {
 }
 
 function updatePrimitive() {
-    const vertices = new Float32Array([
-        0, 0, 0, // v0
-        1, 0, 0, // v1
-        1, 1, 0, // v2
-
-        0, 0, 0, // v0
-        1, 1, 0, // v1
-        0, 1, 0, // v2
-
-    ])
-    // itemSize = 3 because there are 3 values (components) per vertex
-    GEOMETRY.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
-    MATERIAL.color.setRGB(150, 60, 70)
+    const jsonData = JSON.parse(EDITOR_TEXTAREA.value)
+    const vertices = jsonData?.v
+    const faces = jsonData?.f
+    const faceVertices = []
+    for (const face of faces) {
+        for (const vertexIndex of face) {
+            faceVertices.push(...vertices[vertexIndex])
+        }
+    }
+    GEOMETRY.setAttribute('position', new THREE.BufferAttribute(new Float32Array(faceVertices), 3))
+    const color = jsonData?.m?.c
+    MATERIAL.color.setRGB(color[0], color[1], color[2])
+    MATERIAL.opacity = (255 - color[3]) / 255
 }
