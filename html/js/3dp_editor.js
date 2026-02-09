@@ -7,6 +7,7 @@ const IS_PUBLIC = FULL_FILE_PATH.split('/')[0] === 'public'
 const FILE_PATH = FULL_FILE_PATH.substring(FULL_FILE_PATH.indexOf('/'))
 const EDITOR_TEXTAREA = document.getElementById('editor')
 const PREVIEW_DIV = document.getElementById('preview')
+const TEXTURE_LOADER = new THREE.TextureLoader()
 
 const FILE_CONTENT = await (await (IS_PUBLIC ? Arrange.getPublicFile : Arrange.getPrivateFile)(FILE_PATH)).text()
 
@@ -65,7 +66,7 @@ function onWindowResize() {
     RENDERER.setSize(width, height)
 }
 
-function updatePrimitive() {
+async function updatePrimitive() {
     const jsonData = JSON.parse(EDITOR_TEXTAREA.value)
     const vertices = jsonData?.v
     const faces = jsonData?.f
@@ -79,4 +80,8 @@ function updatePrimitive() {
     const color = jsonData?.m?.c
     MATERIAL.color.setRGB(color[0], color[1], color[2])
     MATERIAL.opacity = (255 - color[3]) / 255
+    if (jsonData?.m?.t) {
+        MATERIAL.map = await TEXTURE_LOADER.loadAsync(jsonData.m.t)
+        MATERIAL.needsUpdate = true
+    }
 }

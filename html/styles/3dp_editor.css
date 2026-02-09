@@ -17,14 +17,15 @@ body {
 
     .left {
         display: flex;
-        flex: 1;
         flex-direction: column;
+        width: 400px;
     }
 }
 
 #editor {
     flex: auto;
     resize: none;
+    white-space: nowrap;
 }
 
 #preview {

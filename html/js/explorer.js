@@ -24,6 +24,7 @@ async function selectFileInCurrentPath(name) {
     } else {
         PREVIEW_IFRAME.src = `/api/files/${userPath}${CURRENT_PATH}${name}`
     }
+    PATH_DIV.innerHTML = CURRENT_PATH + name
 }
 
 async function showCurrentDir() {
