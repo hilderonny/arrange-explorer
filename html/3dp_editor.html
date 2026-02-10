@@ -2,6 +2,7 @@
 <html>
 
     <head>
+        <script src="js/vue@3.2.26.global.prod.js"></script>
         <link rel="stylesheet" href="styles/3dp_editor.css">
         <script type="importmap">
             {
@@ -17,11 +18,11 @@
     <body>
 
         <div class="left">
-            <button id="savebutton">Speichern</button>
-            <textarea id="editor"></textarea>
+            <button id="savebutton" @click="save">Speichern</button>
+            <textarea id="editor" v-model="fileContent" @input="handleEditorInput" @keydown.ctrl.s.prevent.stop="save"></textarea>
         </div>
 
-        <div id="preview"></div>
+        <div id="preview" ref="threeJsContainer"></div>
 
     </body>
 

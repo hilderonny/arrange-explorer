@@ -5,24 +5,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 const FULL_FILE_PATH = location.search.substring(1)
 const IS_PUBLIC = FULL_FILE_PATH.split('/')[0] === 'public'
 const FILE_PATH = FULL_FILE_PATH.substring(FULL_FILE_PATH.indexOf('/'))
-const EDITOR_TEXTAREA = document.getElementById('editor')
-const PREVIEW_DIV = document.getElementById('preview')
 const TEXTURE_LOADER = new THREE.TextureLoader()
-
-const FILE_CONTENT = await (await (IS_PUBLIC ? Arrange.getPublicFile : Arrange.getPrivateFile)(FILE_PATH)).text()
-
-EDITOR_TEXTAREA.value = FILE_CONTENT
-EDITOR_TEXTAREA.addEventListener('input', () => {
-    try {
-        updatePrimitive()
-    } catch {}
-})
-EDITOR_TEXTAREA.addEventListener('keydown', async (keyEvent) => {
-    if (keyEvent.ctrlKey && keyEvent.key === 's') {
-        keyEvent.preventDefault()
-        await save()
-    }
-})
 
 // ThreeJS initialisieren
 const RENDERER = new THREE.WebGLRenderer( { antialias: true } )
@@ -47,8 +30,6 @@ RENDERER.setAnimationLoop(() => {
     RENDERER.render(SCENE, CAMERA)
 })
 
-PREVIEW_DIV.appendChild(RENDERER.domElement)
-
 const GEOMETRY = new THREE.BufferGeometry()
 const MATERIAL = new THREE.MeshLambertMaterial()
 MATERIAL.transparent = true
@@ -60,12 +41,7 @@ const POINTS_MATERIAL = new THREE.PointsMaterial( { color: 0xFF0000, size: 2, si
 const POINTS = new THREE.Points(POINTS_GEOMETRY, POINTS_MATERIAL)
 SCENE.add(POINTS)
 
-document.getElementById('savebutton').addEventListener('click', save)
-
 window.addEventListener('resize', onWindowResize, false)
-
-onWindowResize()
-updatePrimitive()
 
 function onWindowResize() {
     RENDERER.setSize(100, 100) // Nur so wird die Größe des übergeordneten Elements richtig brechnet
@@ -76,19 +52,14 @@ function onWindowResize() {
     RENDERER.setSize(width, height)
 }
 
-async function save() {
-    await (IS_PUBLIC ? Arrange.postPublicFile : Arrange.postPrivateFile)(FILE_PATH, EDITOR_TEXTAREA.value)
-    alert('Gespeichert.')
-}
-
-async function updatePrimitive() {
+async function updatePrimitive(fileContent) {
     // Siehe https://threejs.org/manual/#en/custom-buffergeometry
     MATERIAL.map = null
     const vertices = []
     const faceVertices = []
     const faceNormals = []
     const facUVs = []
-    for (const line of EDITOR_TEXTAREA.value.split("\n")) {
+    for (const line of fileContent.split("\n")) {
         const lineType = line[0]
         const lineContent = line.substring(1)
         if (lineType === 'v') {
@@ -123,3 +94,28 @@ function updatePoints(vertices) {
         POINTS_GEOMETRY.setAttribute('position', new THREE.Float32BufferAttribute(flatVertices, 3));
     }
 }
+
+const vueApp = {
+    data() {
+        return {
+            fileContent: undefined,
+        }
+    },
+    async mounted() {
+        this.fileContent = await (await (IS_PUBLIC ? Arrange.getPublicFile : Arrange.getPrivateFile)(FILE_PATH)).text()
+        this.$refs.threeJsContainer.appendChild(RENDERER.domElement)
+        onWindowResize()
+        updatePrimitive(this.fileContent)
+    },
+    methods: {
+        handleEditorInput() {
+            updatePrimitive(this.fileContent)
+        },
+        async save() {
+            await (IS_PUBLIC ? Arrange.postPublicFile : Arrange.postPrivateFile)(FILE_PATH, this.fileContent)
+            alert('Gespeichert.')
+        }
+    }
+}
+
+Vue.createApp(vueApp).mount('body')
