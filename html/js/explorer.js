@@ -107,21 +107,18 @@ document.getElementById('addtextfilebutton').addEventListener('click', async () 
     if (!fileName) return
     const fixedFileName = fileName.replaceAll(/[^\p{L}\p{N}.]/gu, '_')
     const functionToCall = IS_PUBLIC ? Arrange.postPublicFile : Arrange.postPrivateFile
-    await functionToCall(CURRENT_PATH + '/' + fixedFileName, fixedFileName.endsWith('.3dp') ? `{
-  "v": [
-    [0,0,0],
-    [1,0,0],
-    [1,1,0],
-    [0,1,0]
-  ],
-  "f": [
-    [0,1,2],
-    [0,2,3]
-  ],
-  "m": {
-    "c": [100,50,10,0]
-  }
-}` : fixedFileName)
+    await functionToCall(CURRENT_PATH + '/' + fixedFileName, fixedFileName.endsWith('.3dp') ? `v0,0,0
+v1,0,0
+v1,1,0
+v0,1,0
+v0,1,-1
+v1,1,-1
+f0=0,0,1/0,0;1=0,0,1/1,0;2=0,0,1/1,1
+f0=0,0,1/0,0;2=0,0,1/1,1;3=0,0,1/0,1
+f3=0,1,0/0,0;2=0,1,0/1,0;5=0,1,0/1,1
+f3=0,1,0/0,0;5=0,1,0/1,1;4=0,1,0/0,1
+c100,50,10,20
+thttps://i.imgur.com/iy50ZFn.png` : fixedFileName)
     await showCurrentDir()
 })
 

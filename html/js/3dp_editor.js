@@ -17,20 +17,29 @@ EDITOR_TEXTAREA.addEventListener('input', () => {
         updatePrimitive()
     } catch {}
 })
+EDITOR_TEXTAREA.addEventListener('keydown', async (keyEvent) => {
+    if (keyEvent.ctrlKey && keyEvent.key === 's') {
+        keyEvent.preventDefault()
+        await save()
+    }
+})
 
 // ThreeJS initialisieren
 const RENDERER = new THREE.WebGLRenderer( { antialias: true } )
 RENDERER.setPixelRatio(window.devicePixelRatio)
 
-const CAMERA = new THREE.PerspectiveCamera(60, 1, 1, 1000)
+const CAMERA = new THREE.PerspectiveCamera(60, 1, .1, 1000)
 CAMERA.position.set(0, 5, 5)
-CAMERA.add(new THREE.PointLight(0xEEEEEE))
+
+const FLASH_LIGHT = new THREE.PointLight(0xEEEEEE)
+FLASH_LIGHT.position.set(0, 0, 0)
+CAMERA.add(FLASH_LIGHT)
 
 const CONTROLS = new OrbitControls(CAMERA, RENDERER.domElement)
 
 const SCENE = new THREE.Scene()
 SCENE.background = new THREE.Color(0xE6F1FF)
-SCENE.add(new THREE.AmbientLight(0x222222))
+// SCENE.add(new THREE.AmbientLight(0x222222))
 SCENE.add(CAMERA)
 
 RENDERER.setAnimationLoop(() => {
@@ -46,11 +55,12 @@ MATERIAL.transparent = true
 const MESH = new THREE.Mesh(GEOMETRY, MATERIAL)
 SCENE.add(MESH)
 
-document.getElementById('savebutton').addEventListener('click', async () => {
-    await (IS_PUBLIC ? Arrange.postPublicFile : Arrange.postPrivateFile)(FILE_PATH, EDITOR_TEXTAREA.value)
-    alert('Gespeichert.')
-})
+const POINTS_GEOMETRY = new THREE.BufferGeometry()
+const POINTS_MATERIAL = new THREE.PointsMaterial( { color: 0xFF0000, size: 2, sizeAttenuation: false })
+const POINTS = new THREE.Points(POINTS_GEOMETRY, POINTS_MATERIAL)
+SCENE.add(POINTS)
 
+document.getElementById('savebutton').addEventListener('click', save)
 
 window.addEventListener('resize', onWindowResize, false)
 
@@ -66,28 +76,50 @@ function onWindowResize() {
     RENDERER.setSize(width, height)
 }
 
+async function save() {
+    await (IS_PUBLIC ? Arrange.postPublicFile : Arrange.postPrivateFile)(FILE_PATH, EDITOR_TEXTAREA.value)
+    alert('Gespeichert.')
+}
+
 async function updatePrimitive() {
-    const jsonData = JSON.parse(EDITOR_TEXTAREA.value)
-    const vertices = jsonData?.v
-    const faces = jsonData?.f
+    // Siehe https://threejs.org/manual/#en/custom-buffergeometry
+    MATERIAL.map = null
+    const vertices = []
     const faceVertices = []
+    const faceNormals = []
     const facUVs = []
-    for (const face of faces) {
-        for (const vertex of face) {
-            faceVertices.push(...vertices[vertex.v])
-            if (vertex.uv) {
-                facUVs.push(...vertex.uv)
+    for (const line of EDITOR_TEXTAREA.value.split("\n")) {
+        const lineType = line[0]
+        const lineContent = line.substring(1)
+        if (lineType === 'v') {
+            vertices.push(lineContent.split(',').map(v => parseFloat(v)))
+        } else if (lineType === 'f') {
+            for (const vertex of lineContent.split(';')) {
+                const [vertexIndex, vertexDetails] = vertex.split('=')
+                const [normals, uvs] = vertexDetails.split('/')
+                faceVertices.push(...vertices[parseInt(vertexIndex)])
+                faceNormals.push(...normals.split(',').map(n => parseFloat(n)))
+                facUVs.push(...uvs.split(',').map(uv => parseFloat(uv)))
             }
+        } else if (lineType === 'c') {
+            const [r, g, b, a] = lineContent.split(',').map(c => parseInt(c))
+            MATERIAL.color.setRGB(r, g, b)
+            MATERIAL.opacity = (255 - a) / 255
+        } else if (lineType === 't') {
+            GEOMETRY.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(facUVs), 2))
+            MATERIAL.map = await TEXTURE_LOADER.loadAsync(lineContent)
         }
     }
-    // Siehe https://threejs.org/manual/#en/custom-buffergeometry
     GEOMETRY.setAttribute('position', new THREE.BufferAttribute(new Float32Array(faceVertices), 3))
-    const color = jsonData?.m?.c
-    MATERIAL.color.setRGB(color[0], color[1], color[2])
-    MATERIAL.opacity = (255 - color[3]) / 255
-    if (jsonData?.m?.t) {
-        GEOMETRY.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(facUVs), 2))
-        MATERIAL.map = await TEXTURE_LOADER.loadAsync(jsonData.m.t)
-        MATERIAL.needsUpdate = true
+    GEOMETRY.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(faceNormals), 3))
+    MATERIAL.needsUpdate = true
+    updatePoints(vertices)
+}
+
+function updatePoints(vertices) {
+    const flatVertices = []
+    for (const vertex of vertices) {
+        flatVertices.push(...vertex)
+        POINTS_GEOMETRY.setAttribute('position', new THREE.Float32BufferAttribute(flatVertices, 3));
     }
 }
