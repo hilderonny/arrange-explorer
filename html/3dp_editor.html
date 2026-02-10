@@ -20,6 +20,45 @@
         <div class="left">
             <button id="savebutton" @click="save">Speichern</button>
             <textarea id="editor" v-model="fileContent" @input="handleEditorInput" @keydown.ctrl.s.prevent.stop="save"></textarea>
+
+            <h1>Vertices</h1>
+
+            <div v-for="(vertex, index) in vertices" class="vertices">
+                <label>{{index}}</label>
+                <input type="number" v-model="vertex.x" @change="updatePreview" />
+                <input type="number" v-model="vertex.y" @change="updatePreview" />
+                <input type="number" v-model="vertex.z" @change="updatePreview" />
+            </div>
+
+            <h1>Faces</h1>
+
+            <template v-for="(face, faceIndex) in faces">
+
+                <h2>Face {{faceIndex}}</h2>
+
+                <div v-for="(vertex, vertexIndex) in face" class="face">
+
+                    <input type="number" v-model="vertex.index" @change="updatePreview" />
+
+                    <label>N</label>
+                    <input type="number" v-model="vertex.normal.x" @change="updatePreview" />
+                    <input type="number" v-model="vertex.normal.y" @change="updatePreview" />
+                    <input type="number" v-model="vertex.normal.z" @change="updatePreview" />
+
+                    <label>UV</label>
+                    <input type="number" v-model="vertex.uv.x" @change="updatePreview" />
+                    <input type="number" v-model="vertex.uv.y" @change="updatePreview" />
+
+                </div>
+
+            </template>
+
+            <h1>Color</h1>
+
+            <input type="color" v-model="color" />
+            
+            <h1>Texture</h1>
+
         </div>
 
         <div id="preview" ref="threeJsContainer"></div>

@@ -22,6 +22,16 @@ body {
     }
 }
 
+h1 {
+    margin: .3em 0 .2em 0;
+    font-size: 1.2em;
+}
+
+h2 {
+    margin: .2em 0 .1em 0;
+    font-size: 1em;
+}
+
 #editor {
     flex: auto;
     resize: none;
@@ -31,4 +41,20 @@ body {
 #preview {
     flex: 1;
     overflow: hidden;
+}
+
+.vertices {
+
+    input {
+        width: 100px;
+    }
+
+}
+
+.face {
+
+    input {
+        width: 50px;
+    }
+
 }

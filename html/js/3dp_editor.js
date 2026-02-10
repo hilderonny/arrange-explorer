@@ -98,22 +98,73 @@ function updatePoints(vertices) {
 const vueApp = {
     data() {
         return {
+            color: undefined,
+            faces: [],
             fileContent: undefined,
+            texture: undefined,
+            vertices: [],
         }
     },
     async mounted() {
         this.fileContent = await (await (IS_PUBLIC ? Arrange.getPublicFile : Arrange.getPrivateFile)(FILE_PATH)).text()
+        this.parseFileContent()
         this.$refs.threeJsContainer.appendChild(RENDERER.domElement)
         onWindowResize()
         updatePrimitive(this.fileContent)
     },
     methods: {
+        generateFileContent() {
+
+        },
         handleEditorInput() {
             updatePrimitive(this.fileContent)
+        },
+        parseFileContent() {
+            this.vertices = []
+            this.faces = []
+            for (const line of this.fileContent.split("\n")) {
+                const lineType = line[0]
+                const lineContent = line.substring(1)
+                if (lineType === 'v') {
+                    const vertexCoords = lineContent.split(',')
+                    this.vertices.push({ x: parseFloat(vertexCoords[0]), y: parseFloat(vertexCoords[1]), z: parseFloat(vertexCoords[2]) })
+                } else if (lineType === 'f') {
+                    const faceVertices = []
+                    for (const vertex of lineContent.split(';')) {
+                        const faceVertex = {
+                            index: undefined, 
+                            normal: {}, 
+                            uv: {}
+                        }
+                        const [vertexIndex, vertexDetails] = vertex.split('=')
+                        faceVertex.index = vertexIndex
+                        const [normals, uvs] = vertexDetails.split('/')
+                        const normalCoords = normals.split(',')
+                        faceVertex.normal.x = parseFloat(normalCoords[0])
+                        faceVertex.normal.y = parseFloat(normalCoords[1])
+                        faceVertex.normal.z = parseFloat(normalCoords[2])
+                        const uvCoords = uvs.split(',')
+                        faceVertex.uv.x = parseFloat(uvCoords[0])
+                        faceVertex.uv.y = parseFloat(uvCoords[1])
+                        faceVertices.push(faceVertex)
+                    }
+                    this.faces.push(faceVertices)
+                } else if (lineType === 'c') {
+                    // const [r, g, b, a] = lineContent.split(',').map(c => parseInt(c))
+                    // MATERIAL.color.setRGB(r, g, b)
+                    // MATERIAL.opacity = (255 - a) / 255
+                } else if (lineType === 't') {
+                    // GEOMETRY.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(facUVs), 2))
+                    // MATERIAL.map = await TEXTURE_LOADER.loadAsync(lineContent)
+                }
+            }
         },
         async save() {
             await (IS_PUBLIC ? Arrange.postPublicFile : Arrange.postPrivateFile)(FILE_PATH, this.fileContent)
             alert('Gespeichert.')
+        },
+        updatePreview() {
+            console.log('updatePreview')
         }
     }
 }
